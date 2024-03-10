@@ -1,0 +1,75 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  margin: auto;
+}
+
+.message {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  color: #ffffff;
+  background-color: #4caf50; /* Green background for general message */
+  display: none; /* Hide it by default */
+}
+
+.message.error {
+  background-color: #f44336; /* Red background for errors or important notices */
+}
+
+@keyframes flash {
+  0%,
+  100% {
+    background-color: #f44336;
+    color: black;
+  }
+  25%,
+  75% {
+    background-color: #ffffff;
+    color: black;
+  }
+}
+
+.flashing {
+  animation: flash 1.5s 7;
+  padding: 10px;
+  margin-top: 10px; /* Adds space above the flashing message */
+}
+
+#suggestedName {
+  border: 1px solid #ccc;
+  font-size: 16px;
+  padding: 8px;
+  width: calc(100% - 22px);
+  margin-top: 5px; /* Small space between text and input field */
+}
+
+input[type="text"],
+input[type="date"],
+input[type="file"],
+input[type="url"],
+textarea {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+}

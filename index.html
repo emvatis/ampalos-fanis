@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Άμπαλος Φάνης</title>
+    <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>.md Creator</h1>
+      <label>Κείμενο:</label>
+      <textarea id="content" placeholder="Το κείμενο εδώ..." required></textarea
+      ><br />
+
+      <label>Τίτλος:</label>
+      <input
+        type="text"
+        id="title"
+        placeholder="Παράδειγμα: Έχω τρία Αρχίδια"
+        required
+      /><br />
+
+      <label>Ημερομηνία:</label>
+      <input type="date" id="date" required /><br />
+
+      <label>Επιλογή εικόνας:</label>
+      <input type="file" id="image" accept="image/*" required /><span
+        id="selectedImage"
+      ></span
+      ><br />
+
+      <label>Όνομα εφημερίδας:</label>
+      <input
+        type="text"
+        id="linkName"
+        placeholder="Παράδειγμα: To Vima"
+        required
+      /><br />
+
+      <label>Link εφημερίδας με άρθρο:</label>
+      <input
+        type="url"
+        id="linkURL"
+        placeholder="Παράδειγμα: www.tovima.gr/2023/02/16/opinions/plithorismos-kai-xreos/"
+        required
+      /><br />
+
+      <label>Διάφορα tags:</label>
+      <input
+        type="text"
+        id="tags"
+        placeholder="Παράδειγμα: χαζός, Fanis"
+      /><br />
+
+      <button id="createMarkdown">Δημιουργία αρχείου</button>
+      <div id="message"></div>
+    </div>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
