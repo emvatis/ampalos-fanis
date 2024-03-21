@@ -70,7 +70,6 @@ document.getElementById('createMarkdown').addEventListener('click', function () 
 title: "${titleNoAccents}"
 aliases: [/articles/${date}/]
 date: ${dateElement.value}
-tags: ${tags}
 draft: false
 ---
 
