@@ -3,59 +3,83 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Άμπαλος Φάνης</title>
-    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <title>Άμπαλος Φάνης - .md Creator</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png" alt="Favicon" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <div class="container">
       <h1>.md Creator</h1>
-      <label>Κείμενο:</label>
-      <textarea id="content" placeholder="Το κείμενο εδώ..." required></textarea
-      ><br />
+      <form>
+        <div class="form-group">
+          <label for="content">Κείμενο:</label>
+          <textarea
+            id="content"
+            placeholder="Το κείμενο εδώ..."
+            required
+            aria-required="true"
+          ></textarea>
+        </div>
 
-      <label>Τίτλος:</label>
-      <input
-        type="text"
-        id="title"
-        placeholder="Παράδειγμα: Έχω τρία Αρχίδια"
-        required
-      /><br />
+        <div class="form-group">
+          <label for="title">Τίτλος:</label>
+          <input
+            type="text"
+            id="title"
+            placeholder="Παράδειγμα: Έχω τρία Αρχίδια"
+            required
+            aria-required="true"
+          />
+        </div>
 
-      <label>Ημερομηνία:</label>
-      <input type="date" id="date" required /><br />
+        <div class="form-group">
+          <label for="date">Ημερομηνία:</label>
+          <input type="date" id="date" required aria-required="true" />
+        </div>
 
-      <label>Επιλογή εικόνας:</label>
-      <input type="file" id="image" accept="image/*" required /><span
-        id="selectedImage"
-      ></span
-      ><br />
+        <div class="form-group">
+          <label for="image">Επιλογή εικόνας:</label>
+          <input
+            type="file"
+            id="image"
+            accept="image/*"
+            required
+            aria-required="true"
+          />
+          <span id="selectedImage" aria-live="polite"></span>
+        </div>
 
-      <label>Όνομα εφημερίδας:</label>
-      <input
-        type="text"
-        id="linkName"
-        placeholder="Παράδειγμα: To Vima"
-        required
-      /><br />
+        <div class="form-group">
+          <label for="linkName">Όνομα εφημερίδας:</label>
+          <input
+            type="text"
+            id="linkName"
+            placeholder="Παράδειγμα: To Vima"
+            required
+            aria-required="true"
+          />
+        </div>
 
-      <label>Όλο το link εφημερίδας με άρθρο:</label>
-      <input
-        type="url"
-        id="linkURL"
-        placeholder="Παράδειγμα: https://www.tovima.gr/2023/02/16/opinions/plithorismos-kai-xreos/"
-        required
-      /><br />
+        <div class="form-group">
+          <label for="linkURL">Όλο το link εφημερίδας με άρθρο:</label>
+          <input
+            type="url"
+            id="linkURL"
+            placeholder="Παράδειγμα: https://www.tovima.gr/2023/02/16/opinions/plithorismos-kai-xreos/"
+            required
+            aria-required="true"
+          />
+        </div>
 
-      <label>Διάφορα tags:</label>
-      <input
-        type="text"
-        id="tags"
-        placeholder="Παράδειγμα: χαζός, Fanis"
-      /><br />
+        <div class="form-group">
+          <label for="tags">Διάφορα tags:</label>
+          <input type="text" id="tags" placeholder="Παράδειγμα: χαζός, Fanis" />
+        </div>
 
-      <button id="createMarkdown">Δημιουργία αρχείου</button>
-      <div id="message"></div>
+        <button type="button" id="createMarkdown">Δημιουργία αρχείου</button>
+      </form>
+
+      <div id="message" aria-live="polite"></div>
     </div>
 
     <script src="js/app.js"></script>
