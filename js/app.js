@@ -1,75 +1,54 @@
-document.getElementById('image').addEventListener('change', function () {
-    const imageFile = this.files[0];
-    if (imageFile) {
-        const imageName = imageFile.name;
-        document.getElementById('selectedImage').textContent = `Επιλεγμένη εικόνα: ${imageName}`;
-    }
-});
-
+// Function to remove Greek accents from a string
 function removeGreekAccents(str) {
-    const greekMap = {
-        'ά': 'α', 'έ': 'ε', 'ή': 'η', 'ί': 'ι', 'ό': 'ο', 'ύ': 'υ', 'ώ': 'ω',
-        'Ά': 'Α', 'Έ': 'Ε', 'Ή': 'Η', 'Ί': 'Ι', 'Ό': 'Ο', 'Ύ': 'Υ', 'Ώ': 'Ω',
-        'ϊ': 'ι', 'ϋ': 'υ', 'ΐ': 'ι', 'ΰ': 'υ', // Including dialytika
-        'Ϊ': 'Ι', 'Ϋ': 'Υ'
-    };
+  const greekAccentMap = {
+    ά: "α",
+    έ: "ε",
+    ή: "η",
+    ί: "ι",
+    ό: "ο",
+    ύ: "υ",
+    ώ: "ω",
+    Ά: "Α",
+    Έ: "Ε",
+    Ή: "Η",
+    Ί: "Ι",
+    Ό: "Ο",
+    Ύ: "Υ",
+    Ώ: "Ω",
+    ϊ: "ι",
+    ϋ: "υ",
+    ΐ: "ι",
+    ΰ: "υ",
+    Ϊ: "Ι",
+    Ϋ: "Υ",
+  };
 
-    return str.split('').map(function (char) {
-        return greekMap[char] || char;
-    }).join('');
+  return str
+    .split("")
+    .map((char) => greekAccentMap[char] || char)
+    .join("");
 }
 
-document.getElementById('createMarkdown').addEventListener('click', function () {
-    const titleElement = document.getElementById('title');
-    const contentElement = document.getElementById('content');
-    const dateElement = document.getElementById('date');
-    const linkNameElement = document.getElementById('linkName');
-    const linkURLElement = document.getElementById('linkURL');
-    const imageElement = document.getElementById('image');
-    const tagsElement = document.getElementById('tags');
+// Function to generate the recommended image name based on date and title
+function generateImageName(dateSlug, titleSlug, imageName) {
+  const fileExtension = imageName
+    .substring(imageName.lastIndexOf("."))
+    .toLowerCase();
+  return `${dateSlug}_${titleSlug}${fileExtension}`;
+}
 
-    const title = titleElement.value.trim().toLowerCase().replace(/ /g, "_");
-    const content = contentElement.value;
-    const date = dateElement.value.replaceAll('-', '');
-    const linkName = linkNameElement.value;
-    const linkURL = linkURLElement.value;
-    const tags = tagsElement.value.split(',').map(tag => tag.trim()).join(', ');
-    const image = imageElement.files[0];
+// Function to generate the markdown content
+function generateMarkdownContent(formData, imageName, imageLink) {
+  const { title, content, dateFormatted, dateSlug, linkName, linkURL, tags } =
+    formData;
 
-    // Check if every required field passes validity checks
-    const allFieldsValid = titleElement.checkValidity() && contentElement.checkValidity() &&
-        dateElement.checkValidity() && linkNameElement.checkValidity() &&
-        linkURLElement.checkValidity() && imageElement.files.length > 0;
+  // Remove accents and convert title to uppercase
+  const formattedTitle = removeGreekAccents(title).trim().toUpperCase();
 
-    const messageDiv = document.getElementById('message');
-    messageDiv.innerHTML = ''; // Clear any previous messages
-    messageDiv.style.display = 'block'; // Ensure the message div is visible
-
-    if (!allFieldsValid) {
-        const validationMessage = document.createElement('div');
-        validationMessage.textContent = "Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία.";
-        validationMessage.className = 'flashing'; // Reuse the 'flashing' class for consistency
-        messageDiv.appendChild(validationMessage);
-        return; // Stop the function if any required field is invalid
-    }
-
-    let imageName = '';
-    let recommendedName = '';
-    let imageLink = '';
-
-    if (image) {
-        imageName = image.name;
-        let fileExtension = imageName.substring(imageName.lastIndexOf('.')).toLowerCase(); // Ensuring lowercase extension
-        recommendedName = `${date}_${title}${fileExtension}`;
-        imageLink = `/articles/images/${recommendedName}`; // Constructing image link
-    }
-
-    const titleNoAccents = removeGreekAccents(titleElement.value).trim().toUpperCase();
-
-    let markdownContent = `---
-title: "${titleNoAccents}"
-aliases: [/articles/${date}/]
-date: ${dateElement.value}
+  let markdownContent = `---
+title: "${formattedTitle}"
+aliases: [/articles/${dateSlug}/]
+date: ${dateFormatted}
 draft: false
 ---
 
@@ -78,30 +57,117 @@ ${content}
 [${linkName}](${linkURL})
 `;
 
-    if (imageName) {
-        markdownContent += `![${tags}](${imageLink})\n\n`; // Including the image with tags as the alt text
-    }
+  if (imageName) {
+    markdownContent += `![${tags}](${imageLink})\n\n`;
+  }
 
-    const blob = new Blob([markdownContent], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const downloadLink = document.createElement('a');
-    downloadLink.href = url;
-    downloadLink.download = `${date}_${title}.md`;
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+  return markdownContent;
+}
 
-    // Completion message
-    const completionMessage = document.createElement('div');
-    completionMessage.textContent = 'Το .md αρχείο δημιουργήθηκε. Ελέγξτε τις λήψεις σας.';
-    completionMessage.style.marginBottom = '10px'; // Adds space below the completion message
-    messageDiv.appendChild(completionMessage);
+// Function to create and download the markdown file
+function createMarkdownFile(markdownContent, dateSlug, titleSlug) {
+  const blob = new Blob([markdownContent], { type: "text/markdown" });
+  const url = URL.createObjectURL(blob);
+  const downloadLink = document.createElement("a");
+  downloadLink.href = url;
+  downloadLink.download = `${dateSlug}_${titleSlug}.md`;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+}
 
-    if (image) {
-        // Flashing rename message with class for styling
-        const renameMessage = document.createElement('div');
-        renameMessage.className = 'flashing';
-        renameMessage.innerHTML = `Παρακαλώ μετονομάστε την εικόνα σε: <input id="suggestedName" style="width:100%;" value="${recommendedName}" onclick="this.select();">`;
-        messageDiv.appendChild(renameMessage);
-    }
+// Function to display a message in the message div
+function displayMessage(message, className = "") {
+  const messageDiv = document.getElementById("message");
+  const messageElement = document.createElement("div");
+  messageElement.textContent = message;
+  if (className) {
+    messageElement.className = className;
+  }
+  messageDiv.appendChild(messageElement);
+}
+
+// Function to copy the suggested name to the clipboard
+function copyToClipboard() {
+  const suggestedNameInput = document.getElementById("suggestedName");
+  suggestedNameInput.select();
+  document.execCommand("copy");
+  alert("Το όνομα αρχείου αντιγράφηκε στο πρόχειρο!");
+}
+
+// Function to handle the form submission
+function handleFormSubmit(event) {
+  event.preventDefault();
+
+  const dateFormatted = document.getElementById("date").value;
+  const dateSlug = dateFormatted.replaceAll("-", "");
+
+  const formData = {
+    title: document.getElementById("title").value.trim(),
+    content: document.getElementById("content").value,
+    dateFormatted: dateFormatted,
+    dateSlug: dateSlug,
+    linkName: document.getElementById("linkName").value,
+    linkURL: document.getElementById("linkURL").value,
+    tags: document
+      .getElementById("tags")
+      .value.split(",")
+      .map((tag) => tag.trim())
+      .join(", "),
+    image: document.getElementById("image").files[0],
+  };
+
+  if (!document.getElementById("createMarkdownForm").checkValidity()) {
+    displayMessage("Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία.", "error");
+    return;
+  }
+
+  const titleSlug = formData.title.toLowerCase().replace(/ /g, "_");
+
+  let imageName = "";
+  let recommendedName = "";
+  let imageLink = "";
+
+  if (formData.image) {
+    imageName = formData.image.name;
+    recommendedName = generateImageName(dateSlug, titleSlug, imageName);
+    imageLink = `/articles/images/${recommendedName}`;
+
+    const renameMessage = `
+      <div class="rename-message">
+        <p>Παρακαλώ μετονομάστε την εικόνα σε:</p>
+        <input type="text" class="suggested-name" id="suggestedName" value="${recommendedName}" readonly>
+        <button type="button" class="copy-button" onclick="copyToClipboard()">Αντιγραφή</button>
+      </div>
+    `;
+
+    const messageDiv = document.getElementById("message");
+    messageDiv.innerHTML += renameMessage;
+  }
+
+  const markdownContent = generateMarkdownContent(
+    formData,
+    imageName,
+    imageLink
+  );
+  createMarkdownFile(markdownContent, dateSlug, titleSlug);
+
+  displayMessage(
+    "Το .md αρχείο δημιουργήθηκε. Ελέγξτε τις λήψεις σας.",
+    "success"
+  );
+}
+
+// Event listener for the form submission
+document
+  .getElementById("createMarkdownForm")
+  .addEventListener("submit", handleFormSubmit);
+
+// Event listener for the image selection
+document.getElementById("image").addEventListener("change", function () {
+  const imageFile = this.files[0];
+  const selectedImageElement = document.getElementById("selectedImage");
+  selectedImageElement.textContent = imageFile
+    ? `Επιλεγμένη εικόνα: ${imageFile.name}`
+    : "";
 });
